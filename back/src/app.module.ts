@@ -3,9 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configService } from './config/config.service';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(configService.getTypeOrmConfig())],
+  imports: [
+    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+    ChatModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
