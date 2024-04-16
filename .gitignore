@@ -1,0 +1,41 @@
+# compiled output
+*/dist
+*/tmp
+*/node_modules
+*/out-tsc
+*/bazel-out
+
+# Logs
+*logs
+*.log
+*npm-debug.log*
+*pnpm-debug.log*
+*yarn-debug.log*
+*yarn-error.log*
+*lerna-debug.log*
+
+# OS
+*.DS_Store
+*Thumbs.db
+
+# Tests
+*/coverage
+*/.nyc_output
+
+# Miscellaneous
+*.angular/cache
+*.sass-cache/
+*/connect.lock
+*/coverage
+*/libpeerconnection.log
+*testem.log
+*/typings
+
+# IDEs and editors
+*/.idea
+*.project
+*.classpath
+*.c9/
+*.launch
+*.settings/
+*.sublime-workspace
