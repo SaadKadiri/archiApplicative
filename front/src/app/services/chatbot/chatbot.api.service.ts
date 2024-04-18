@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Conversation } from '../../shared/types';
 @Injectable({
   providedIn: 'root',
 })
@@ -11,11 +12,14 @@ export class ChatbotApiService {
 
   ask(
     question: string,
+    conversationId: string,
     token?: string
   ): Observable<{ token: string; response: string }> {
     return this.http.post<{ token: string; response: string }>(
       `${this.apiUrl}/chat`,
-      token ? { token, question } : { question },
+      token
+        ? { token, question, conversationId }
+        : { question, conversationId },
       {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',
@@ -25,7 +29,6 @@ export class ChatbotApiService {
   }
 
   createConversation(token: string | undefined) {
-    debugger;
     return this.http.post<{ token: string; conversationId: number }>(
       `${this.apiUrl}/chat/createConversation`,
       token ? { token } : {},
@@ -34,6 +37,12 @@ export class ChatbotApiService {
           'Content-Type': 'application/json',
         }),
       }
+    );
+  }
+
+  getAllConversations(token: string | undefined) {
+    return this.http.get<Conversation[]>(
+      `${this.apiUrl}/chat/getConversations/${token}`
     );
   }
 

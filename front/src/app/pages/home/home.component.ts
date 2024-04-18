@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ChatbotService } from '../../services/chatbot/chatbot.service';
+import { Conversation } from '../../shared/types';
 
 @Component({
   selector: 'app-home',
@@ -11,11 +12,13 @@ import { ChatbotService } from '../../services/chatbot/chatbot.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   title = 'ng17-boilerplate-app';
   fileName = '';
 
   constructor(private readonly _chatBotService: ChatbotService) {}
+
+  currentConversation: number | undefined;
 
   conversations: {
     id: number;
@@ -28,11 +31,35 @@ export class HomeComponent {
 
   chats: { sender: 'user' | 'bot' | 'file'; content: string }[] = [];
 
+  ngOnInit() {
+    this._chatBotService.getAllConversation()?.subscribe(data => {
+      this.conversations = data;
+    });
+  }
+
   post(question: string) {
     this.chats.push({ sender: 'user', content: question });
-    this._chatBotService.ask(question).subscribe(response => {
-      this.chats.push({ sender: 'bot', content: response.response });
-    });
+    if (this.currentConversation) {
+      this._chatBotService
+        .ask(question, this.currentConversation.toString())
+        .subscribe(response => {
+          this.chats.push({ sender: 'bot', content: response.response });
+        });
+    } else {
+      this._chatBotService.createConversation().subscribe(data => {
+        this.conversations.push({
+          id: data.conversationId,
+          ownerId: data.token,
+          messages: [],
+        });
+        this.currentConversation = data.conversationId;
+        this._chatBotService
+          .ask(question, this.currentConversation!.toString())
+          .subscribe(response => {
+            this.chats.push({ sender: 'bot', content: response.response });
+          });
+      });
+    }
   }
 
   onFileSelected(event: unknown) {
@@ -40,8 +67,24 @@ export class HomeComponent {
       target: { files: File[] };
     };
 
+    if (!this.currentConversation) {
+      this._chatBotService.createConversation().subscribe(data => {
+        this.conversations.push({
+          id: data.conversationId,
+          ownerId: data.token,
+          messages: [],
+        });
+        this.currentConversation = data.conversationId;
+        this.sendFile(typedEvent);
+      });
+    } else {
+      this.sendFile(typedEvent);
+    }
+  }
+
+  sendFile(typedEvent: { target: { files: File[] } }) {
     const file: File = typedEvent.target.files[0];
-    if (file) {
+    if (file && this.currentConversation) {
       this.fileName = file.name;
       this.chats.push({
         sender: 'file',
@@ -53,6 +96,7 @@ export class HomeComponent {
         'question',
         'genere une description depuis le fichier excel'
       );
+      formData.append('conversationId', this.currentConversation.toString());
       this._chatBotService.sendFile(formData).subscribe(response => {
         this.chats.push({ sender: 'bot', content: response.response });
       });
@@ -66,6 +110,12 @@ export class HomeComponent {
         ownerId: data.token,
         messages: [],
       });
+      this.currentConversation = data.conversationId;
     });
+  }
+
+  setConversation(conversation: Conversation) {
+    this.chats = conversation.messages;
+    this.currentConversation = conversation.id;
   }
 }

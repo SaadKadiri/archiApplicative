@@ -35,7 +35,7 @@ export class ChatController {
     return this.chatService.createConversation(conversationDto);
   }
 
-  @Get('/getConversations')
+  @Get('/getConversations/:id')
   getAllConversations(@Param('id') id: string) {
     return this.chatService.getAllConversation(id);
   }

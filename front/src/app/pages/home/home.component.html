@@ -1,14 +1,14 @@
 <div class="bg-gradient-to-r from-primary-300 to-primary-400 h-full w-full flex">
-    <div class="min-w-[16%] h-full rounded-r-md bg-primary-800 relative">
+    <div class="min-w-[16%] max-w-[20%] h-full rounded-r-md bg-primary-800 relative">
         <h1 class="text-grey-50 absolute top-8 left-16 text-[28px] font-sans">
             ChatCPT
         </h1>
-        <div (click)="createConversation()" class="cursor-pointer bg-primary-900 px-[13px] py-1 rounded-full text-grey-50 text-[20px] w-fit mt-[80px] ml-auto mr-4">
+        <div (click)="createConversation()" class="mb-4 cursor-pointer bg-primary-900 px-[13px] py-1 rounded-full text-grey-50 text-[20px] w-fit mt-[80px] ml-auto mr-4">
             +
         </div>
         @for(conversation of conversations; track conversation){
-            <div class="rounded-md bg-primary-950 text-grey-50 p-8 w-full mb-4">
-                {{conversation.id}}
+            <div (click)="setConversation(conversation)" class="cursor-pointer bg-primary-950 text-grey-50 py-4 px-8 w-full mb-[2px] truncate">
+                {{ conversation.messages.length ? conversation.messages[0].content : conversation.id}}
             </div>
         }
     </div>

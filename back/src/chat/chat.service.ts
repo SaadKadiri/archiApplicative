@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { askDto, conversationDto } from './chat.dto';
 import { ChatGPTService } from 'src/AI/ai.service';
-import { map, of, switchMap } from 'rxjs';
+import { map, of, switchMap, tap } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import * as uuid from 'uuid';
 import { readFileSync } from 'fs';
@@ -53,21 +53,36 @@ export class ChatService {
       userToken = uuid.v4();
     }
 
-    const csvFile = readFileSync('uploads/csv/parameters.csv');
-    const csvData = csvFile.toString();
-
+    let csvData = undefined;
     const conversation = await this.getConversation(askDto.conversationId);
+
+    if (askDto.isFile) {
+      const csvFile = readFileSync('uploads/csv/parameters.csv');
+      csvData = csvFile.toString();
+      conversation.messages.push({
+        content: 'genere une description depuis le fichier excel: file.csv',
+        sender: 'file',
+      });
+      await this.conversationRepository.save(conversation);
+    } else {
+      conversation.messages.push({ content: askDto.question, sender: 'user' });
+      await this.conversationRepository.save(conversation);
+    }
 
     const response = await this.chatGPTService.generateResponse(
       askDto.question,
-      csvData,
       conversation,
+      csvData ?? undefined,
     );
 
     return response.pipe(
       map(
         (response: AxiosResponse) => response.data.choices[0].message.content,
       ),
+      tap(async (value) => {
+        conversation.messages.push({ content: value, sender: 'bot' });
+        await this.conversationRepository.save(conversation);
+      }),
       switchMap((value) =>
         of({
           response: value,

@@ -8,14 +8,24 @@ import { tap } from 'rxjs';
 export class ChatbotService {
   constructor(private readonly _chatBotApiService: ChatbotApiService) {}
 
-  ask(question: string) {
+  ask(question: string, currentConversation: string) {
     const token = localStorage.getItem('token');
 
-    return this._chatBotApiService.ask(question, token ?? undefined).pipe(
-      tap((response: { token: string; response: string }) => {
-        localStorage.setItem('token', response.token);
-      })
-    );
+    return this._chatBotApiService
+      .ask(question, currentConversation, token ?? undefined)
+      .pipe(
+        tap((response: { token: string; response: string }) => {
+          localStorage.setItem('token', response.token);
+        })
+      );
+  }
+
+  getAllConversation() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return this._chatBotApiService.getAllConversations(token);
+    }
+    return null;
   }
 
   createConversation() {
@@ -33,6 +43,8 @@ export class ChatbotService {
     if (token) {
       form.append('token', token);
     }
+
+    form.append('isFile', 'true');
 
     return this._chatBotApiService.sendFile(form).pipe(
       tap((response: { token: string; response: string }) => {

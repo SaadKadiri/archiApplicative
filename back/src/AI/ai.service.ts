@@ -17,8 +17,8 @@ export class ChatGPTService {
 
   async generateResponse(
     prompt?: string,
-    parameters?: string,
     conversation?: Conversation,
+    parameters?: string,
   ): Promise<Observable<AxiosResponse>> {
     const data = {
       messages: [
