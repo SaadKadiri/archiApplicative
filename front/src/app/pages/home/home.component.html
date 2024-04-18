@@ -1,8 +1,12 @@
 <div class="bg-gradient-to-r from-primary-300 to-primary-400 h-full w-full flex">
-    <div class="w-1/6 h-full rounded-r-md bg-primary-800"></div>
-    <div class="w-full px-10 pt-40">
+    <div class="min-w-[16%] h-full rounded-r-md bg-primary-800 relative">
+        <h1 class="text-grey-50 absolute top-8 left-16 text-[28px] font-sans">
+            ChatCPT
+        </h1>
+    </div>
+    <div class="w-[84%] px-10 pt-40 overflow-y-auto pb-24">
     @for(chat of chats; track chat){
-        <div [ngClass]="{'bg-primary-950': chat.sender === 'bot', 'bg-primary-700 ml-auto': chat.sender === 'user'}" class="rounded-md bg-primary-950 text-grey-50 p-8 max-w-[50%] mb-4 w-fit">
+        <div [ngClass]="{'bg-primary-950': chat.sender === 'bot', 'bg-primary-700 ml-auto': chat.sender === 'user'}" class="whitespace-pre-line rounded-md bg-primary-950 text-grey-50 p-8 max-w-[50%] mb-4 w-fit">
             {{chat.content}}
         </div>
     }
