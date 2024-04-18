@@ -1,10 +1,11 @@
-<div class="bg-gradient-to-r from-primary-300 to-primary-400 h-full w-full">
-    <div class="w-1/6 h-full rounded-r-md bg-primary-800">
-        @for(chat of chats; track chat){
-            <div class="rounded-md bg-primary-950 text-grey-50 p-8">
-                {{chat.content}}
-            </div>
-        }
+<div class="bg-gradient-to-r from-primary-300 to-primary-400 h-full w-full flex">
+    <div class="w-1/6 h-full rounded-r-md bg-primary-800"></div>
+    <div class="w-full px-10 pt-40">
+    @for(chat of chats; track chat){
+        <div [ngClass]="{'bg-primary-950': chat.sender === 'bot', 'bg-primary-700 ml-auto': chat.sender === 'user'}" class="rounded-md bg-primary-950 text-grey-50 p-8 max-w-[50%] mb-4 w-fit">
+            {{chat.content}}
+        </div>
+    }
     </div>
     <input (keyup.enter)="post(adress.value)" #adress  class="absolute bottom-[20px] left-[43%] w-1/3 pl-2 text-grey-50 h-[44px] rounded-md border-[2px] border-secondary-500 bg-primary-900">
 </div>
