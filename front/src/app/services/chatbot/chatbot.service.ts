@@ -17,4 +17,18 @@ export class ChatbotService {
       })
     );
   }
+
+  sendFile(form: FormData) {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      form.append('token', token);
+    }
+
+    return this._chatBotApiService.sendFile(form).pipe(
+      tap((response: { token: string; response: string }) => {
+        localStorage.setItem('token', response.token);
+      })
+    );
+  }
 }

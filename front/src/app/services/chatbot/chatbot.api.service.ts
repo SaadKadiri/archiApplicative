@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
@@ -21,6 +21,21 @@ export class ChatbotApiService {
           'Content-Type': 'application/json',
         }),
       }
+    );
+  }
+
+  sendFile(form: FormData) {
+    const params = new HttpParams();
+
+    const options = {
+      params: params,
+      reportProgress: true,
+    };
+
+    return this.http.post<{ token: string; response: string }>(
+      `${this.apiUrl}/chat`,
+      form,
+      options
     );
   }
 }

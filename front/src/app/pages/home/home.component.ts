@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { ChatbotApiService } from '../../services/chatbot/chatbot.api.service';
+import { ChatbotService } from '../../services/chatbot/chatbot.service';
 
 @Component({
   selector: 'app-home',
@@ -13,15 +13,40 @@ import { ChatbotApiService } from '../../services/chatbot/chatbot.api.service';
 })
 export class HomeComponent {
   title = 'ng17-boilerplate-app';
+  fileName = '';
 
-  constructor(private readonly _chatBotApiService: ChatbotApiService) {}
+  constructor(private readonly _chatBotService: ChatbotService) {}
 
-  chats: { sender: 'user' | 'bot'; content: string }[] = [];
+  chats: { sender: 'user' | 'bot' | 'file'; content: string }[] = [];
 
   post(question: string) {
     this.chats.push({ sender: 'user', content: question });
-    this._chatBotApiService.ask(question).subscribe(response => {
+    this._chatBotService.ask(question).subscribe(response => {
       this.chats.push({ sender: 'bot', content: response.response });
     });
+  }
+
+  onFileSelected(event: unknown) {
+    const typedEvent: { target: { files: File[] } } = event as {
+      target: { files: File[] };
+    };
+
+    const file: File = typedEvent.target.files[0];
+    if (file) {
+      this.fileName = file.name;
+      this.chats.push({
+        sender: 'file',
+        content: 'genere une description depuis ce fichier: ' + file.name,
+      });
+      const formData = new FormData();
+      formData.append('parameters', file);
+      formData.append(
+        'question',
+        'genere une description depuis le fichier excel'
+      );
+      this._chatBotService.sendFile(formData).subscribe(response => {
+        this.chats.push({ sender: 'bot', content: response.response });
+      });
+    }
   }
 }

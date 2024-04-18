@@ -21,6 +21,9 @@ export class ChatService {
     const csvFile = readFileSync('uploads/csv/parameters.csv');
     const csvData = csvFile.toString();
 
+    console.log(askDto);
+    console.log(csvData);
+
     return this.chatGPTService.generateResponse(askDto.question, csvData).pipe(
       map(
         (response: AxiosResponse) => response.data.choices[0].message.content,
