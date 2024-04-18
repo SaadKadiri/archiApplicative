@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 
 @Injectable()
