@@ -56,10 +56,12 @@ export class ChatService {
     const csvFile = readFileSync('uploads/csv/parameters.csv');
     const csvData = csvFile.toString();
 
+    const conversation = await this.getConversation(askDto.conversationId);
+
     const response = await this.chatGPTService.generateResponse(
-      askDto.conversationId,
       askDto.question,
       csvData,
+      conversation,
     );
 
     return response.pipe(

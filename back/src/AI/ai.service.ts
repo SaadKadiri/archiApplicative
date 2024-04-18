@@ -2,26 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
-import { ChatService } from 'src/chat/chat.service';
+import { Conversation } from 'src/chat/chat.entity';
 
 @Injectable()
 export class ChatGPTService {
   private readonly apiKey: string;
   private readonly apiUrl: string;
 
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly chatService: ChatService,
-  ) {
+  constructor(private readonly httpService: HttpService) {
     this.apiKey = process.env.OPENAI_API_KEY;
     this.apiUrl =
       'https://az-dev-fc-epsi-cog-002-xfq.openai.azure.com/openai/deployments/gpt35/chat/completions?api-version=2024-02-01';
   }
 
   async generateResponse(
-    conversationId: string,
     prompt?: string,
     parameters?: string,
+    conversation?: Conversation,
   ): Promise<Observable<AxiosResponse>> {
     const data = {
       messages: [
@@ -33,15 +30,14 @@ export class ChatGPTService {
       ],
     };
 
-    const previousChats =
-      await this.chatService.getConversation(conversationId);
-
-    previousChats.messages.forEach((message) => {
-      data.messages.push({
-        role: message.sender === 'bot' ? 'system' : 'user',
-        content: message.content,
+    if (conversation) {
+      conversation.messages.forEach((message) => {
+        data.messages.push({
+          role: message.sender === 'bot' ? 'system' : 'user',
+          content: message.content,
+        });
       });
-    });
+    }
 
     if (parameters) {
       data.messages.push({
