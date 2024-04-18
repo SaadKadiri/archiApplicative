@@ -14,19 +14,33 @@ export class ChatGPTService {
       'https://az-dev-fc-epsi-cog-002-xfq.openai.azure.com/openai/deployments/gpt35/chat/completions?api-version=2024-02-01';
   }
 
-  generateResponse(prompt: string): Observable<AxiosResponse> {
+  generateResponse(
+    prompt: string,
+    parameters?: string,
+  ): Observable<AxiosResponse> {
     const data = {
       messages: [
         {
           role: 'system',
-          content: 'You are a helpful assistant.',
-        },
-        {
-          role: 'user',
-          content: prompt,
+          content:
+            "tu est un bot permettant de generer des description de produit en fonction d'informations donner via le chat ou via un fichier excel, tu genere les description en fonction d'un titre et de plusieurs mots clé",
         },
       ],
     };
+
+    if (parameters) {
+      data.messages.push({
+        role: 'system',
+        content:
+          "l'utilisateur as envoyer un fichier excel et son contenu est:" +
+          parameters,
+      });
+    }
+
+    data.messages.push({
+      role: 'user',
+      content: prompt ?? 'genere une description depuis le fichier excel',
+    });
 
     const headers = {
       'Content-Type': 'application/json',
