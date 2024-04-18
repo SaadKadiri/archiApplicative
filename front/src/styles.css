@@ -14,17 +14,16 @@ body{height:100vh;}
  
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #888;
-    border-radius: 5px;
+    @apply bg-primary-300;
 }
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #000;
-    border-radius: 5px;
+    @apply bg-primary-700;
+    border-radius: 3px;
 }
  
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    @apply bg-primary-950;
 }
