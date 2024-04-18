@@ -17,7 +17,7 @@ export class ChatService {
     private readonly chatGPTService: ChatGPTService,
   ) {}
 
-  createConversation(conversationDto: conversationDto) {
+  async createConversation(conversationDto: conversationDto) {
     let userToken = '';
     if (conversationDto.token) {
       userToken = conversationDto.token;
@@ -25,12 +25,12 @@ export class ChatService {
       userToken = uuid.v4();
     }
 
-    const conversation = this.conversationRepository.save({
+    const conversation = await this.conversationRepository.save({
       messages: [],
       ownerId: userToken,
     });
 
-    return { token: userToken, conversationId: conversation };
+    return { token: userToken, conversationId: conversation.id };
   }
 
   getAllConversation(ownerId) {

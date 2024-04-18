@@ -3,6 +3,14 @@
         <h1 class="text-grey-50 absolute top-8 left-16 text-[28px] font-sans">
             ChatCPT
         </h1>
+        <div (click)="createConversation()" class="cursor-pointer bg-primary-900 px-[13px] py-1 rounded-full text-grey-50 text-[20px] w-fit mt-[80px] ml-auto mr-4">
+            +
+        </div>
+        @for(conversation of conversations; track conversation){
+            <div class="rounded-md bg-primary-950 text-grey-50 p-8 w-full mb-4">
+                {{conversation.id}}
+            </div>
+        }
     </div>
     <div class="w-[84%] px-10 pt-40 overflow-y-auto pb-24">
     @for(chat of chats; track chat){

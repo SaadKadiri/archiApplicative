@@ -18,6 +18,15 @@ export class ChatbotService {
     );
   }
 
+  createConversation() {
+    const token = localStorage.getItem('token');
+    return this._chatBotApiService.createConversation(token ?? undefined).pipe(
+      tap((response: { token: string; conversationId: number }) => {
+        localStorage.setItem('token', response.token);
+      })
+    );
+  }
+
   sendFile(form: FormData) {
     const token = localStorage.getItem('token');
 

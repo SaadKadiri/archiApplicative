@@ -17,6 +17,15 @@ export class HomeComponent {
 
   constructor(private readonly _chatBotService: ChatbotService) {}
 
+  conversations: {
+    id: number;
+    messages: {
+      content: string;
+      sender: 'user' | 'bot' | 'file';
+    }[];
+    ownerId: string;
+  }[] = [];
+
   chats: { sender: 'user' | 'bot' | 'file'; content: string }[] = [];
 
   post(question: string) {
@@ -48,5 +57,15 @@ export class HomeComponent {
         this.chats.push({ sender: 'bot', content: response.response });
       });
     }
+  }
+
+  createConversation() {
+    this._chatBotService.createConversation().subscribe(data => {
+      this.conversations.push({
+        id: data.conversationId,
+        ownerId: data.token,
+        messages: [],
+      });
+    });
   }
 }

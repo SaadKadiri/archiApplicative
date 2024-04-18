@@ -24,6 +24,19 @@ export class ChatbotApiService {
     );
   }
 
+  createConversation(token: string | undefined) {
+    debugger;
+    return this.http.post<{ token: string; conversationId: number }>(
+      `${this.apiUrl}/chat/createConversation`,
+      token ? { token } : {},
+      {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+        }),
+      }
+    );
+  }
+
   sendFile(form: FormData) {
     const params = new HttpParams();
 
