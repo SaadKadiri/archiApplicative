@@ -1,14 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { askDto } from './chat.dto';
+import { askDto, conversationDto } from './chat.dto';
 import { ChatGPTService } from 'src/AI/ai.service';
 import { map, of, switchMap } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import * as uuid from 'uuid';
 import { readFileSync } from 'fs';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Conversation } from './chat.entity';
 
 @Injectable()
 export class ChatService {
-  constructor(private readonly chatGPTService: ChatGPTService) {}
+  constructor(
+    @InjectRepository(Conversation)
+    private readonly conversationRepository: Repository<Conversation>,
+    private readonly chatGPTService: ChatGPTService,
+  ) {}
+
+  createConversation(conversationDto: conversationDto) {
+    let userToken = '';
+    if (conversationDto.token) {
+      userToken = conversationDto.token;
+    } else {
+      userToken = uuid.v4();
+    }
+
+    const conversation = this.conversationRepository.save({
+      messages: [],
+      ownerId: userToken,
+    });
+
+    return { token: userToken, conversationId: conversation };
+  }
+
+  getAllConversation(ownerId) {
+    return this.conversationRepository.findBy({
+      ownerId,
+    });
+  }
+
+  getConversation(id) {
+    return this.conversationRepository.findOneBy({
+      id,
+    });
+  }
 
   async ask(askDto: askDto) {
     let userToken = '';
@@ -21,10 +56,13 @@ export class ChatService {
     const csvFile = readFileSync('uploads/csv/parameters.csv');
     const csvData = csvFile.toString();
 
-    console.log(askDto);
-    console.log(csvData);
+    const response = await this.chatGPTService.generateResponse(
+      askDto.conversationId,
+      askDto.question,
+      csvData,
+    );
 
-    return this.chatGPTService.generateResponse(askDto.question, csvData).pipe(
+    return response.pipe(
       map(
         (response: AxiosResponse) => response.data.choices[0].message.content,
       ),

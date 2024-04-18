@@ -1,6 +1,13 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Param,
+  Controller,
+  Get,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { askDto } from './chat.dto';
+import { askDto, conversationDto } from './chat.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
@@ -21,5 +28,15 @@ export class ChatController {
   )
   ask(@Body() askDto: askDto) {
     return this.chatService.ask(askDto);
+  }
+
+  @Post('/createConversation')
+  createConversation(@Body() conversationDto: conversationDto) {
+    return this.chatService.createConversation(conversationDto);
+  }
+
+  @Get('/getConversations')
+  getAllConversations(@Param('id') id: string) {
+    return this.chatService.getAllConversation(id);
   }
 }
