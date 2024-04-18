@@ -15,7 +15,7 @@ export class ChatGPTService {
   }
 
   generateResponse(
-    prompt: string,
+    prompt?: string,
     parameters?: string,
   ): Observable<AxiosResponse> {
     const data = {

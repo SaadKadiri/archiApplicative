@@ -1,4 +1,4 @@
 export class askDto {
-  question: string;
+  question?: string;
   token?: string;
 }

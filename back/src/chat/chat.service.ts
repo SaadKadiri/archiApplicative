@@ -5,7 +5,6 @@ import { map, of, switchMap } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import * as uuid from 'uuid';
 import { readFileSync } from 'fs';
-import { parse } from 'papaparse';
 
 @Injectable()
 export class ChatService {
@@ -21,13 +20,6 @@ export class ChatService {
 
     const csvFile = readFileSync('uploads/csv/parameters.csv');
     const csvData = csvFile.toString();
-
-    const parsedCsv = await parse(csvData, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: (header) => header.toLowerCase().replace('#', '').trim(),
-      complete: (results) => results.data,
-    });
 
     return this.chatGPTService.generateResponse(askDto.question, csvData).pipe(
       map(
