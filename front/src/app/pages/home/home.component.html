@@ -8,21 +8,26 @@
         </div>
         <div class="overflow-y-auto h-[86%]">
         @for(conversation of conversations; track conversation){
-            <div (click)="setConversation(conversation)" [ngClass]="{'bg-primary-950': conversation.id !== currentConversation, 'bg-primary-700': conversation.id === currentConversation}" class="cursor-pointer bg-primary-950 text-grey-50 py-4 px-8 w-full mb-[2px] truncate">
-                {{ conversation.messages.length ? conversation.messages[0].content : conversation.id}}
+            <div (click)="setConversation(conversation)" [ngClass]="{'bg-primary-950': conversation.id !== currentConversation, 'bg-primary-700': conversation.id === currentConversation}" class="relative cursor-pointer bg-primary-950 text-grey-50 py-4 px-8 w-full mb-[2px] flex">
+                <div class="truncate">{{ conversation.messages.length ? conversation.messages[0].content : conversation.id}}</div>
+                <div click-stop-propagation (click)="deleteConversation($event, conversation)" class="rounded-full p-1 px-2 text-xs w-fit h-fit bg-primary-500 absolute right-1 top-1">X</div>
             </div>
         }
         </div>
     </div>
     <div class="w-[84%] px-10 pt-40 overflow-y-auto pb-24">
     @for(chat of chats; track chat){
-        <div [ngClass]="{'bg-primary-950': chat.sender === 'bot', 'bg-primary-700 ml-auto': chat.sender === 'user' || chat.sender === 'file'}" class="whitespace-pre-line rounded-md bg-primary-950 text-grey-50 p-8 max-w-[50%] mb-4 w-fit">
-            {{chat.content}}
+        <div [ngClass]="{'p-4': chat.isLoading , 'p-8': !chat.isLoading ,'bg-primary-950': chat.sender === 'bot', 'bg-primary-700 ml-auto': chat.sender === 'user' || chat.sender === 'file'}" class="whitespace-pre-line rounded-md bg-primary-950 text-grey-50  max-w-[50%] mb-4 w-fit">
+            @if(chat.isLoading){
+                <img src="assets/loading.gif" style="width:40px;height:20px;">
+            }@else {
+                {{chat.content}}
+            }
         </div>
     }
     </div>
     <div class="absolute bottom-[20px] left-[43%] flex h-[50px] w-[40%]">
-        <input (keyup.enter)="post(adress.value)" #adress  class="w-full pl-2 text-grey-50 h-[44px] mt-1 rounded-md border-[2px] border-secondary-500 bg-primary-900">
+        <input (keyup.enter)="post(input.value); input.value = ''" #input  class="w-full pl-2 text-grey-50 h-[44px] mt-1 rounded-md border-[2px] border-secondary-500 bg-primary-900">
         <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload>
         <div class="ml-4">
             <button class="bg-success-500" mat-mini-fab color="primary" class="upload-btn"

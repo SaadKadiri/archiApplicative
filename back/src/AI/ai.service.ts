@@ -50,7 +50,7 @@ export class ChatGPTService {
 
     data.messages.push({
       role: 'user',
-      content: prompt ?? 'genere une description depuis le fichier excel',
+      content: prompt ?? 'lance la generation depuis le fichier excel',
     });
 
     const headers = {

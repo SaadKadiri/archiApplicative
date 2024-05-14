@@ -28,6 +28,10 @@ export class ChatbotService {
     return null;
   }
 
+  deleteConversation(id: number) {
+    return this._chatBotApiService.deleteConversations(id);
+  }
+
   createConversation() {
     const token = localStorage.getItem('token');
     return this._chatBotApiService.createConversation(token ?? undefined).pipe(

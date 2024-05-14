@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -29,7 +29,13 @@ export class HomeComponent implements OnInit {
     ownerId: string;
   }[] = [];
 
-  chats: { sender: 'user' | 'bot' | 'file'; content: string }[] = [];
+  chats: {
+    sender: 'user' | 'bot' | 'file';
+    content: string;
+    isLoading: boolean;
+  }[] = [];
+
+  isLoading = false;
 
   ngOnInit() {
     this._chatBotService.getAllConversation()?.subscribe(data => {
@@ -38,12 +44,18 @@ export class HomeComponent implements OnInit {
   }
 
   post(question: string) {
-    this.chats.push({ sender: 'user', content: question });
+    this.chats.push({ sender: 'user', content: question, isLoading: false });
+    this.chats.push({ sender: 'bot', content: '', isLoading: true });
     if (this.currentConversation) {
       this._chatBotService
         .ask(question, this.currentConversation.toString())
         .subscribe(response => {
-          this.chats.push({ sender: 'bot', content: response.response });
+          this.chats = this.chats.filter(chat => chat.isLoading === false);
+          this.chats.push({
+            sender: 'bot',
+            content: response.response,
+            isLoading: false,
+          });
         });
     } else {
       this._chatBotService.createConversation().subscribe(data => {
@@ -56,7 +68,11 @@ export class HomeComponent implements OnInit {
         this._chatBotService
           .ask(question, this.currentConversation!.toString())
           .subscribe(response => {
-            this.chats.push({ sender: 'bot', content: response.response });
+            this.chats.push({
+              sender: 'bot',
+              content: response.response,
+              isLoading: false,
+            });
           });
       });
     }
@@ -89,6 +105,7 @@ export class HomeComponent implements OnInit {
       this.chats.push({
         sender: 'file',
         content: 'genere une description depuis ce fichier: ' + file.name,
+        isLoading: false,
       });
       const formData = new FormData();
       formData.append('parameters', file);
@@ -98,7 +115,11 @@ export class HomeComponent implements OnInit {
       );
       formData.append('conversationId', this.currentConversation.toString());
       this._chatBotService.sendFile(formData).subscribe(response => {
-        this.chats.push({ sender: 'bot', content: response.response });
+        this.chats.push({
+          sender: 'bot',
+          content: response.response,
+          isLoading: false,
+        });
       });
     }
   }
@@ -114,8 +135,30 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  deleteConversation(event: Event, conversation: Conversation) {
+    event.stopPropagation();
+    this._chatBotService.deleteConversation(conversation.id).subscribe(() => {
+      if (this.conversations.length !== 1) {
+        this.setConversation(
+          this.conversations[this.conversations.indexOf(conversation) - 1]
+        );
+      } else {
+        this.chats = [];
+      }
+
+      this.conversations = this.conversations.filter(
+        oldConv => conversation.id !== oldConv.id
+      );
+    });
+  }
+
   setConversation(conversation: Conversation) {
-    this.chats = conversation.messages;
+    this.chats = conversation.messages.map(chat => {
+      return {
+        ...chat,
+        isLoading: false,
+      };
+    });
     this.currentConversation = conversation.id;
   }
 }

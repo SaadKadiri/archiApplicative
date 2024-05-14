@@ -5,6 +5,7 @@ import {
   Get,
   Post,
   UseInterceptors,
+  Delete,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { askDto, conversationDto } from './chat.dto';
@@ -30,13 +31,18 @@ export class ChatController {
     return this.chatService.ask(askDto);
   }
 
-  @Post('/createConversation')
+  @Post('/conversations')
   createConversation(@Body() conversationDto: conversationDto) {
     return this.chatService.createConversation(conversationDto);
   }
 
-  @Get('/getConversations/:id')
-  getAllConversations(@Param('id') id: string) {
-    return this.chatService.getAllConversation(id);
+  @Get('/conversations/:token')
+  getAllConversations(@Param('token') token: string) {
+    return this.chatService.getAllConversation(token);
+  }
+
+  @Delete('/conversations/:id')
+  deleteConversation(@Param('id') id: string) {
+    return this.chatService.deleteConversation(id);
   }
 }

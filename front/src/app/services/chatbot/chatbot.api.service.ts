@@ -30,7 +30,7 @@ export class ChatbotApiService {
 
   createConversation(token: string | undefined) {
     return this.http.post<{ token: string; conversationId: number }>(
-      `${this.apiUrl}/chat/createConversation`,
+      `${this.apiUrl}/chat/conversations`,
       token ? { token } : {},
       {
         headers: new HttpHeaders({
@@ -42,7 +42,13 @@ export class ChatbotApiService {
 
   getAllConversations(token: string | undefined) {
     return this.http.get<Conversation[]>(
-      `${this.apiUrl}/chat/getConversations/${token}`
+      `${this.apiUrl}/chat/conversations/${token}`
+    );
+  }
+
+  deleteConversations(id: number | undefined) {
+    return this.http.delete<Conversation[]>(
+      `${this.apiUrl}/chat/conversations/${id}`
     );
   }
 
