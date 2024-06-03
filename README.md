@@ -1,6 +1,6 @@
-
-<img src="https://github.com/marcopyre/archiApplicative/blob/main/front/src/assets/chatcpt.png" width=50% height=50%>
-
+<p align="center">
+  <img src="https://github.com/marcopyre/archiApplicative/blob/main/front/src/assets/chatcpt.png" width=80% height=80%>
+</p>
 ChatCpt, l'application vous permettant de générer des descriptions de produit depuis un fichier via la GenAI !
 
 ## Frontend
