@@ -73,8 +73,8 @@ export class ChatGPTService {
     }
 
     data.messages.push({
-      role: 'user',
-      content: prompt ?? 'lance la generation depuis le fichier excel',
+      role: parameters ? 'system' : 'user',
+      content: prompt,
     });
 
     console.log(data);

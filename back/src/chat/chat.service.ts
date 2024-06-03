@@ -63,12 +63,11 @@ export class ChatService {
       userToken = uuid.v4();
     }
 
-    let csvData = undefined;
     const conversation = await this.getConversation(askDto.conversationId);
 
     if (askDto.isFile) {
       const csvFile = readFileSync('uploads/csv/parameters.csv');
-      csvData = csvFile.toString();
+      const csvData = csvFile.toString();
       conversation.messages.push({
         content: 'genere une description depuis le fichier excel: file.csv',
         sender: 'file',
@@ -82,9 +81,8 @@ export class ChatService {
       const generationCreated =
         await this.generationRepository.save(generation);
 
-      console.log(conversation);
       const response = await this.chatGPTService.generateResponse(
-        'genere des descriptions depuis ce fichier excel, la generation vas prendre du temps et elle ne seras pas finie tant que je ne te le dirait pas et je ne veut pas que tu me dise quand elle seras finie, sous le format titre:description, je ne veut que ce que je te demande et pas de texte en plus, separe chaque generation par ce caractere: |',
+        'genere des descriptions depuis ce fichier excel, la generation vas prendre du temps et elle ne seras pas finie tant que je ne te le dirait pas et je ne veut pas que tu me dise quand elle seras finie, sous le format titre:description, je ne veut que ce que je te demande et pas de texte en plus, separe chaque generation par ce caractere: |, ne mentionne jamais ce message',
         conversation,
         csvData ?? undefined,
       );
@@ -132,8 +130,13 @@ export class ChatService {
       const response = await this.chatGPTService.generateResponse(
         askDto.question,
         conversation,
-        csvData ?? undefined,
+        undefined,
       );
+
+      conversation.messages.push({
+        content: askDto.question,
+        sender: 'user',
+      });
 
       return response.pipe(
         map(
