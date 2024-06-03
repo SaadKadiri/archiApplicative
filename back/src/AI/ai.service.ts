@@ -32,19 +32,15 @@ export class ChatGPTService {
       conversation: conversation.id.toString(),
     });
 
-    conversation.messages = conversation.messages.filter(
-      (message) => message.sender !== 'file',
-    );
-
     let context =
       "tu est un bot permettant de generer des description de produit en fonction d'informations donner via le chat ou via un fichier excel, tu genere les description en fonction d'un titre et de plusieurs mots clé";
 
     if (isGenerating) {
       context +=
-        ', la generation depuis un fichier est actuellement en cours sur cette conversation';
+        ", la generation est en cours, la generation de produit n'est pas finie, la generation n'est pas terminée";
     } else {
       context +=
-        ', aucune generation depuis un fichier est actuellement en cours pour cette conversation';
+        ", la generation n'est pas en cours, la generation est terminée, la generation de produit est finie";
     }
 
     const data = {

@@ -82,8 +82,9 @@ export class ChatService {
       const generationCreated =
         await this.generationRepository.save(generation);
 
+      console.log(conversation);
       const response = await this.chatGPTService.generateResponse(
-        'genere des descriptions depuis ce fichier excel, sous le format titre:description, je ne veut que ce que je te demande et pas de texte en plus, separe chaque generation par ce caractere: |',
+        'genere des descriptions depuis ce fichier excel, la generation vas prendre du temps et elle ne seras pas finie tant que je ne te le dirait pas et je ne veut pas que tu me dise quand elle seras finie, sous le format titre:description, je ne veut que ce que je te demande et pas de texte en plus, separe chaque generation par ce caractere: |',
         conversation,
         csvData ?? undefined,
       );
@@ -128,7 +129,6 @@ export class ChatService {
         token: userToken,
       });
     } else {
-      conversation.messages.push({ content: askDto.question, sender: 'user' });
       const response = await this.chatGPTService.generateResponse(
         askDto.question,
         conversation,
