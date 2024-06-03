@@ -94,7 +94,6 @@ export class ChatService {
           ),
         )
         .subscribe((data) => {
-          console.log(data);
           const splittedData: Array<string[]> = data
             .split('|')
             .map((splitted) => splitted.split(':'))

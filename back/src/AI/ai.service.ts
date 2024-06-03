@@ -77,8 +77,6 @@ export class ChatGPTService {
       content: prompt,
     });
 
-    console.log(data);
-
     const headers = {
       'Content-Type': 'application/json',
       'api-key': `${this.apiKey}`,
