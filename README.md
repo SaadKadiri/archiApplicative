@@ -1,4 +1,6 @@
 
+![plot](./front/src/assets/chatcpt.png)
+
 
 ChatCpt, l'application vous permettant de générer des descriptions de produit depuis un fichier via la GenAI !
 
