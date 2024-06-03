@@ -32,6 +32,10 @@ export class ChatGPTService {
       conversation: conversation.id.toString(),
     });
 
+    conversation.messages = conversation.messages.filter(
+      (message) => message.sender !== 'file',
+    );
+
     let context =
       "tu est un bot permettant de generer des description de produit en fonction d'informations donner via le chat ou via un fichier excel, tu genere les description en fonction d'un titre et de plusieurs mots clé";
 
@@ -44,7 +48,7 @@ export class ChatGPTService {
     }
 
     const data = {
-      temperature: 0.4,
+      temperature: 0.7,
       messages: [
         {
           role: 'system',
@@ -67,10 +71,17 @@ export class ChatGPTService {
       data.messages.push({
         role: 'system',
         content:
-          "l'utilisateur as envoyer un fichier excel, et son contenu est:" +
+          "l'utilisateur as envoyer un fichier excel et son contenu est:" +
           parameters,
       });
     }
+
+    data.messages.push({
+      role: 'user',
+      content: prompt ?? 'lance la generation depuis le fichier excel',
+    });
+
+    console.log(data);
 
     const headers = {
       'Content-Type': 'application/json',
