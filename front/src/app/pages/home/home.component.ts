@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit {
         this._chatBotService
           .ask(question, this.currentConversation!.toString())
           .subscribe(response => {
+            this.chats = this.chats.filter(chat => chat.isLoading === false);
             this.chats.push({
               sender: 'bot',
               content: response.response,
@@ -132,20 +133,29 @@ export class HomeComponent implements OnInit {
         messages: [],
       });
       this.currentConversation = data.conversationId;
+      this.chats = [];
     });
   }
 
   deleteConversation(event: Event, conversation: Conversation) {
     event.stopPropagation();
     this._chatBotService.deleteConversation(conversation.id).subscribe(() => {
-      if (this.conversations.length !== 1) {
-        this.setConversation(
-          this.conversations[this.conversations.indexOf(conversation) - 1]
-        );
-      } else {
-        this.chats = [];
+      if (this.currentConversation === conversation.id) {
+        if (this.conversations.length > 0) {
+          let indexToSwitch = this.conversations.indexOf(conversation);
+          if (
+            this.conversations.indexOf(conversation) ===
+            this.conversations.length - 1
+          ) {
+            indexToSwitch -= 1;
+          } else {
+            indexToSwitch += 1;
+          }
+          this.setConversation(this.conversations[indexToSwitch]);
+        } else {
+          this.chats = [];
+        }
       }
-
       this.conversations = this.conversations.filter(
         oldConv => conversation.id !== oldConv.id
       );
@@ -153,12 +163,20 @@ export class HomeComponent implements OnInit {
   }
 
   setConversation(conversation: Conversation) {
-    this.chats = conversation.messages.map(chat => {
-      return {
-        ...chat,
-        isLoading: false,
-      };
-    });
-    this.currentConversation = conversation.id;
+    this.conversations;
+    if (conversation.id !== this.currentConversation) {
+      if (conversation?.messages) {
+        this.chats = conversation.messages.map(chat => {
+          return {
+            ...chat,
+            isLoading: false,
+          };
+        });
+      } else {
+        this.chats = [];
+      }
+
+      this.currentConversation = conversation.id;
+    }
   }
 }
