@@ -19,7 +19,7 @@ export class ChatGPTService {
   ) {
     this.apiKey = process.env.OPENAI_API_KEY;
     this.apiUrl =
-      'https://az-dev-fc-epsi-cog-002-xfq.openai.azure.com/openai/deployments/gpt35/chat/completions?api-version=2024-02-01';
+      'https://epsi-instance-mmk.openai.azure.com/openai/deployments/gpt35/chat/completions?api-version=2024-02-01';
   }
 
   async generateResponse(
