@@ -25,7 +25,7 @@ npm start
 ## Data template
 
 
-| title  | keywords |
+| Titre  | mot clé |
 | ------------- | ------------- |
 | basket bleu  | grand, beau, spacieux, confortable, rapide |
 | chapeau rouge  | couvrant, leger, pratique |
